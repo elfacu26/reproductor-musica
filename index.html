@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio-Test</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/b8769b55ee.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+
+        <div class="music-player">
+
+            <nav>
+                <div class="button">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </div>
+            </nav>
+
+            <img src="media/img/1.png" class="song-img" id="imagen">
+
+            <h1 id="song-name">When the Sun Hits</h1>
+
+            <p id="artist">Slowdive</p>
+
+            <audio id="song">
+                <source src="media/audio/1.mp3" type="audio/mpeg" id="audio-src" onended="nextSong()">
+            </audio>
+
+            <div class="slider-container">
+                <input type="range" min="1" max="100" value="0" id="progress">
+            </div>
+
+            <div class="slider-container">
+                <i class="fa fa-volume-down"></i>
+                <input type="range" min="0" max="100" value="100" class="volume-slider" onchange="setVolume()">
+                <i class="fa fa-volume-up"></i>
+            </div>
+
+            <div class="controls">
+                <div id="none" onclick="loop()"> <i class="fa-solid fa-repeat"></i> </div>
+                <div id="rewind" onclick="previousSong()"> <i class="fa-solid fa-backward-fast"></i> </div>
+                <div onclick="playPause()"> <i class="fa-solid fa-play" id="ctrlIcon"></i> </div>
+                <div onclick="nextSong()"> <i class="fa-solid fa-forward-fast"></i> </div>
+                <div class="random-btn" id="none" onclick="randomTrack()"> <i class="fa-solid fa-shuffle"></i> </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        let progress = document.getElementById("progress");
+        let song = document.getElementById("song");
+        let imagen = document.getElementById("imagen");
+        let audioSrc = document.getElementById("audio-src");
+        let artist = document.getElementById("artist");
+        let songName = document.getElementById("song-name");
+        let volumeSlider = document.querySelector(".volume-slider");
+
+        let ctrlIcon = document.getElementById("ctrlIcon");
+        let repetir = document.getElementById("none");
+        let shuffle = document.querySelector(".random-btn");
+
+        let previous = null;
+        let next = null;
+        const canciones = 4;
+
+        const music_list = [
+            {
+                img : 'file:///C:/Users/musimundo/Desktop/PROGRAMACION/HTML%20CSS%20JAVA/audio-test/media/img/1.png',
+                name : 'When the Sun Hits',
+                artist : 'Slowdive',
+                audio : 'file:///C:/Users/musimundo/Desktop/PROGRAMACION/HTML%20CSS%20JAVA/audio-test/media/audio/1.mp3'
+            },
+            {
+                img : 'file:///C:/Users/musimundo/Desktop/PROGRAMACION/HTML%20CSS%20JAVA/audio-test/media/img/2.png',
+                name : 'Beauty School',
+                artist : 'Deftones',
+                audio : 'file:///C:/Users/musimundo/Desktop/PROGRAMACION/HTML%20CSS%20JAVA/audio-test/media/audio/2.mp3'
+            },
+            {
+                img : 'file:///C:/Users/musimundo/Desktop/PROGRAMACION/HTML%20CSS%20JAVA/audio-test/media/img/3.png',
+                name : 'Idainaotsuge',
+                artist : 'Sacoyans',
+                audio : 'file:///C:/Users/musimundo/Desktop/PROGRAMACION/HTML%20CSS%20JAVA/audio-test/media/audio/3.mp3'
+            },
+            {
+                img : 'file:///C:/Users/musimundo/Desktop/PROGRAMACION/HTML%20CSS%20JAVA/audio-test/media/img/4.png',
+                name : 'Everlong',
+                artist : 'Foo Fighters',
+                audio : 'file:///C:/Users/musimundo/Desktop/PROGRAMACION/HTML%20CSS%20JAVA/audio-test/media/audio/4.mp3'
+            },
+        ]
+
+        song.volume = 0.5;
+
+        song.pause();
+
+        song.onloadedmetadata = function(){
+            progress.max = song.duration;
+        }
+
+        song.addEventListener("ended", function(){
+            nextSong();
+        })
+
+        function setVolume(){
+            song.volume = volumeSlider.value / 200;
+        }
+
+        function playPause(){
+            if(ctrlIcon.classList.contains("fa-pause")){
+                song.pause();
+                ctrlIcon.classList.remove("fa-pause");
+                ctrlIcon.classList.add("fa-play");
+            }
+            else{
+                song.play();
+                ctrlIcon.classList.add("fa-pause");
+                ctrlIcon.classList.remove("fa-play");
+            }
+        }
+
+        function loop(){
+            if(repetir.id == "none"){
+                repetir.id = "active"
+                song.loop = true;
+            }
+            else{
+                repetir.id = "none"
+                song.loop = false;
+            }
+        }
+
+        function randomTrack(){
+            if(shuffle.id == "none"){
+                shuffle.id = "active"
+            }
+            else{
+                shuffle.id = "none"
+            }
+        }
+
+        function previousSong(){
+            if(song.currentTime > 5){
+                song.currentTime = 0;
+                song.play();
+            }
+            else if(song.currentTime < 5){
+                previous = true;
+                next = false;
+
+                changeImg();
+                changeSong();
+                changeName();
+                song.play();
+                ctrlIcon.classList.add("fa-pause");
+                ctrlIcon.classList.remove("fa-play");
+            }
+        }
+
+        function nextSong(){
+            previous = false;
+            next = true;
+
+            changeImg();
+            changeSong();
+            changeName();
+            song.play();
+            ctrlIcon.classList.add("fa-pause");
+            ctrlIcon.classList.remove("fa-play");
+        }
+
+        function changeName(){
+            if(imagen.src == music_list[0].img){
+                songName.innerHTML = music_list[0].name;
+                artist.innerHTML = music_list[0].artist;
+            }
+            else if(imagen.src == music_list[1].img){
+                songName.innerHTML = music_list[1].name;
+                artist.innerHTML = music_list[1].artist;
+            }
+            else if(imagen.src == music_list[2].img){
+                songName.innerHTML = music_list[2].name;
+                artist.innerHTML = music_list[2].artist;
+            }
+            else if(imagen.src == music_list[3].img){
+                songName.innerHTML = music_list[3].name;
+                artist.innerHTML = music_list[3].artist;
+            }
+        }
+
+        function changeImg(){
+            if(previous == true){
+                if(imagen.src == music_list[0].img){
+                    imagen.src = music_list[3].img;
+                }
+                else if(imagen.src == music_list[1].img){
+                    imagen.src = music_list[0].img;
+                }
+                else if(imagen.src == music_list[2].img){
+                    imagen.src = music_list[1].img;
+                }
+                else if(imagen.src == music_list[3].img){
+                    imagen.src = music_list[2].img;
+                }
+            }
+            if(next == true){
+                if(imagen.src == music_list[0].img){
+                    imagen.src = music_list[1].img;
+                }
+                else if(imagen.src == music_list[1].img){
+                    imagen.src = music_list[2].img;
+                }
+                else if(imagen.src == music_list[2].img){
+                    imagen.src = music_list[3].img;
+                }
+                else if(imagen.src == music_list[3].img){
+                    imagen.src = music_list[0].img;
+                }
+            }  
+        }
+
+        function changeSong(){
+            song.pause();
+            if(next == true){
+                if(audioSrc.src == music_list[0].audio){
+                    audioSrc.src = music_list[1].audio;
+                    song.load()
+                }
+                else if(audioSrc.src == music_list[1].audio){
+                    audioSrc.src = music_list[2].audio;
+                    song.load()
+                }
+                else if(audioSrc.src == music_list[2].audio){
+                    audioSrc.src = music_list[3].audio;
+                    song.load()
+                }
+                else if(audioSrc.src == music_list[3].audio){
+                    audioSrc.src = music_list[0].audio;
+                    song.load()
+                }
+            }
+            if(previous == true){
+                if(audioSrc.src == music_list[0].audio){
+                    audioSrc.src = music_list[3].audio;
+                    song.load()
+                }
+                else if(audioSrc.src == music_list[1].audio){
+                    audioSrc.src = music_list[0].audio;
+                    song.load()
+                }
+                else if(audioSrc.src == music_list[2].audio){
+                    audioSrc.src = music_list[1].audio;
+                    song.load()
+                }
+                else if(audioSrc.src == music_list[3].audio){
+                    audioSrc.src = music_list[2].audio;
+                    song.load()
+                }
+            }
+        }
+
+        if(song.play()){
+            setInterval(()=>{
+                progress.value = song.currentTime;
+            }, 500);
+        }
+
+        progress.onchange = function(){
+            song.currentTime = progress.value;
+        }
+    </script>
+</body>
+</html>
